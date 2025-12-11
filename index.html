@@ -4,39 +4,52 @@
 <meta charset="UTF-8">
 <title>Plant Health Detector</title>
 
-<!-- Nature-themed styling -->
 <style>
     body {
         font-family: "Segoe UI", sans-serif;
-        background: linear-gradient(#e8f9e4, #c4ecb8);
+        background: linear-gradient(#d8ffc8, #b5f7a6);
         margin: 0;
         padding: 0;
-        color: #2f5125;
+        color: #205c20;
     }
 
     header {
         text-align: center;
         padding: 30px 10px;
-        background: #a9d89e;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        background: #37b24d; /* Vibrant green */
+        color: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
 
     h1 {
         margin: 0;
-        font-size: 2.5rem;
+        font-size: 2.6rem;
     }
 
     .container {
         max-width: 900px;
         margin: 30px auto;
-        background: #ffffffcc;
+        background: #ffffffee;
         padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
-    h2 {
-        margin-top: 0;
+    button {
+        background: #2fa73e;
+        border: none;
+        padding: 12px 25px;
+        color: white;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: 0.3s;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+
+    button:hover {
+        background: #269234;
     }
 
     #webcam-container {
@@ -45,31 +58,27 @@
         margin-top: 20px;
     }
 
-    button {
-        background: #6bbf59;
-        border: none;
-        padding: 12px 25px;
-        color: white;
+    /* Color-tag prediction cards */
+    .tag {
+        margin: 8px 0;
+        padding: 12px;
         border-radius: 8px;
-        font-size: 1rem;
-        cursor: pointer;
-        margin-top: 10px;
-        transition: 0.3s;
-    }
-
-    button:hover {
-        background: #5aa94b;
-    }
-
-    #label-container div {
-        background: #f2ffe9;
-        margin: 6px 0;
-        padding: 10px;
-        border-left: 6px solid #6bbf59;
-        border-radius: 6px;
         font-size: 1.1rem;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        font-weight: 600;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        color: #fff;
     }
+
+    /* Tag Colors (With Nitrogen & Phosphorus Swapped) */
+    .Healthy { background: #2ecc71; }              /* Green */
+    .WaterIssues { background: #3498db; }          /* Blue */
+    .LightIssues { background: #f1c40f; color: #4a3f00; } /* Yellow */
+
+    .NitrogenDeficiency { background: #e74c3c; }   /* RED (swapped) */
+    .PhosphorusDeficiency { background: #9b59b6; } /* PURPLE (swapped) */
+
+    .PotassiumDeficiency { background: #e67e22; }  /* Orange */
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
@@ -80,30 +89,28 @@
 
 <header>
     <h1>🌿 Plant Health Detector</h1>
-    <p>Using AI to help you care for your plants</p>
+    <p>AI-powered plant wellness analysis</p>
 </header>
 
 <div class="container">
-    <h2>What This Tool Does</h2>
+    <h2>How This Helps</h2>
     <p>
-        This AI tool analyzes a live image of your plant and tells you its health condition.
-        It can detect:
-        <strong>Healthy</strong>, <strong>Water Issues</strong>, <strong>Light Issues</strong>,
-        <strong>Nitrogen Deficiency</strong>, <strong>Potassium Deficiency</strong>, and
-        <strong>Phosphorus Deficiency</strong>.
-        This tool can help gardeners, beginners, and plant owners quickly diagnose common plant problems.
+        This tool uses a Teachable Machine model to identify the health of your plant.  
+        It can detect: <strong>Healthy</strong>, <strong>Water Issues</strong>, 
+        <strong>Light Issues</strong>, <strong>Nitrogen Deficiency</strong>,
+        <strong>Potassium Deficiency</strong>, and <strong>Phosphorus Deficiency</strong>.  
+        Perfect for gardeners, beginners, or anyone caring for plants.
     </p>
 
-    <h2>How to Use the Plant Health Detector</h2>
+    <h2>Instructions</h2>
     <ol>
-        <li>Place your plant in front of your webcam.</li>
-        <li>Press the green <strong>Start</strong> button below.</li>
-        <li>Hold the plant steady and let the AI analyze it.</li>
-        <li>Read the live predictions that appear underneath the video.</li>
+        <li>Place your plant in view of the webcam.</li>
+        <li>Click <strong>Start</strong> to load the AI model.</li>
+        <li>Hold the plant steady and watch the predictions update in real time.</li>
     </ol>
 
     <center>
-        <button type="button" onclick="init()">Start</button>
+        <button onclick="init()">Start</button>
     </center>
 
     <div id="webcam-container"></div>
@@ -122,8 +129,7 @@
         model = await tmImage.load(modelURL, metadataURL);
         maxPredictions = model.getTotalClasses();
 
-        const flip = true;
-        webcam = new tmImage.Webcam(250, 250, flip);
+        webcam = new tmImage.Webcam(250, 250, true);
         await webcam.setup();
         await webcam.play();
         window.requestAnimationFrame(loop);
@@ -131,9 +137,34 @@
         document.getElementById("webcam-container").appendChild(webcam.canvas);
         labelContainer = document.getElementById("label-container");
 
-        labelContainer.innerHTML = ""; // Clear previous labels
+        labelContainer.innerHTML = "";
         for (let i = 0; i < maxPredictions; i++) {
-            labelContainer.appendChild(document.createElement("div"));
+            const div = document.createElement("div");
+            div.classList.add("tag");
+            labelContainer.appendChild(div);
+        }
+    }
+
+    function formatClassName(name) {
+        return name.replace(/\s+/g, "");
+    }
+
+    async function predict() {
+        const prediction = await model.predict(webcam.canvas);
+
+        for (let i = 0; i < prediction.length; i++) {
+            let className = prediction[i].className;
+            let confidence = (prediction[i].probability * 100).toFixed(1) + "%";
+
+            let tag = labelContainer.childNodes[i];
+
+            tag.innerHTML = `${className}: ${confidence}`;
+
+            // reset classes
+            tag.className = "tag";
+
+            // apply color style matching the class
+            tag.classList.add(formatClassName(className));
         }
     }
 
@@ -141,16 +172,6 @@
         webcam.update();
         await predict();
         window.requestAnimationFrame(loop);
-    }
-
-    async function predict() {
-        const prediction = await model.predict(webcam.canvas);
-        for (let i = 0; i < maxPredictions; i++) {
-            const classPrediction =
-                `${prediction[i].className}: ${(prediction[i].probability * 100).toFixed(1)}%`;
-
-            labelContainer.childNodes[i].innerHTML = classPrediction;
-        }
     }
 </script>
 
