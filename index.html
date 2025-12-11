@@ -7,16 +7,16 @@
 <style>
     body {
         font-family: "Segoe UI", sans-serif;
-        background: linear-gradient(#d8ffc8, #b5f7a6);
+        background: linear-gradient(#d4ffbf, #a8f58f); /* More vibrant green */
         margin: 0;
         padding: 0;
-        color: #205c20;
+        color: #1f4a1f;
     }
 
     header {
         text-align: center;
         padding: 30px 10px;
-        background: #37b24d; /* Vibrant green */
+        background: #2fb344;  /* vibrant green */
         color: white;
         box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
@@ -36,7 +36,7 @@
     }
 
     button {
-        background: #2fa73e;
+        background: #28a63b;
         border: none;
         padding: 12px 25px;
         color: white;
@@ -49,7 +49,7 @@
     }
 
     button:hover {
-        background: #269234;
+        background: #208c31;
     }
 
     #webcam-container {
@@ -58,7 +58,7 @@
         margin-top: 20px;
     }
 
-    /* Color-tag prediction cards */
+    /* Base tag style */
     .tag {
         margin: 8px 0;
         padding: 12px;
@@ -69,18 +69,21 @@
         color: #fff;
     }
 
-    /* Tag Colors (With Nitrogen & Phosphorus Swapped) */
-    .Healthy { background: #2ecc71; }              /* Green */
-    .WaterIssues { background: #3498db; }          /* Blue */
-    .LightIssues { background: #f1c40f; color: #4a3f00; } /* Yellow */
+    /* CLASS COLORS — Final Correct Version */
 
-    .NitrogenDeficiency { background: #e74c3c; }   /* RED (swapped) */
-    .PhosphorusDeficiency { background: #9b59b6; } /* PURPLE (swapped) */
+    /* Same colors as the earlier vibrant version */
+    .Healthy { background: #2ecc71; }               /* green */
+    .WaterIssues { background: #3498db; }           /* blue */
+    .LightIssues { background: #f1c40f; color: #4a3f00; } /* yellow */
+    .PotassiumDeficiency { background: #e67e22; }   /* orange */
 
-    .PotassiumDeficiency { background: #e67e22; }  /* Orange */
+    /* Swapped colors for Nitrogen & Phosphorus */
+    .NitrogenDeficiency { background: #e74c3c; }    /* RED */
+    .PhosphorusDeficiency { background: #9b59b6; }  /* PURPLE */
 
 </style>
 
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 
@@ -95,18 +98,17 @@
 <div class="container">
     <h2>How This Helps</h2>
     <p>
-        This tool uses a Teachable Machine model to identify the health of your plant.  
-        It can detect: <strong>Healthy</strong>, <strong>Water Issues</strong>, 
+        This tool uses a Teachable Machine model to identify your plant’s health condition.
+        It detects: <strong>Healthy</strong>, <strong>Water Issues</strong>,
         <strong>Light Issues</strong>, <strong>Nitrogen Deficiency</strong>,
-        <strong>Potassium Deficiency</strong>, and <strong>Phosphorus Deficiency</strong>.  
-        Perfect for gardeners, beginners, or anyone caring for plants.
+        <strong>Potassium Deficiency</strong>, and <strong>Phosphorus Deficiency</strong>.
     </p>
 
     <h2>Instructions</h2>
     <ol>
-        <li>Place your plant in view of the webcam.</li>
-        <li>Click <strong>Start</strong> to load the AI model.</li>
-        <li>Hold the plant steady and watch the predictions update in real time.</li>
+        <li>Place the plant in view of your webcam.</li>
+        <li>Click <strong>Start</strong> below.</li>
+        <li>Hold the plant steady as the predictions appear live.</li>
     </ol>
 
     <center>
@@ -139,7 +141,7 @@
 
         labelContainer.innerHTML = "";
         for (let i = 0; i < maxPredictions; i++) {
-            const div = document.createElement("div");
+            let div = document.createElement("div");
             div.classList.add("tag");
             labelContainer.appendChild(div);
         }
@@ -153,17 +155,16 @@
         const prediction = await model.predict(webcam.canvas);
 
         for (let i = 0; i < prediction.length; i++) {
-            let className = prediction[i].className;
-            let confidence = (prediction[i].probability * 100).toFixed(1) + "%";
+            const className = prediction[i].className;
+            const confidence = (prediction[i].probability * 100).toFixed(1) + "%";
 
             let tag = labelContainer.childNodes[i];
-
             tag.innerHTML = `${className}: ${confidence}`;
 
-            // reset classes
+            // Reset to base style
             tag.className = "tag";
 
-            // apply color style matching the class
+            // Add the correct color class
             tag.classList.add(formatClassName(className));
         }
     }
