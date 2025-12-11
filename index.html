@@ -16,7 +16,7 @@
     header {
         text-align: center;
         padding: 30px 10px;
-        background: #37b24d; /* Vibrant green */
+        background: #37b24d; /* More vibrant green */
         color: white;
         box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
@@ -69,15 +69,13 @@
         color: #fff;
     }
 
-    /* Tag Colors (With Nitrogen & Phosphorus Swapped) */
-    .Healthy { background: #2ecc71; }              /* Green */
-    .WaterIssues { background: #3498db; }          /* Blue */
-    .LightIssues { background: #f1c40f; color: #4a3f00; } /* Yellow */
-
-    .NitrogenDeficiency { background: #e74c3c; }   /* RED (swapped) */
-    .PhosphorusDeficiency { background: #9b59b6; } /* PURPLE (swapped) */
-
-    .PotassiumDeficiency { background: #e67e22; }  /* Orange */
+    /* Individual tag colors */
+    .Healthy { background: #2ecc71; }
+    .WaterIssues { background: #3498db; }
+    .LightIssues { background: #f1c40f; color: #4a3f00; }
+    .NitrogenDeficiency { background: #9b59b6; }
+    .PotassiumDeficiency { background: #e67e22; }
+    .PhosphorusDeficiency { background: #e74c3c; }
 
 </style>
 
@@ -96,9 +94,9 @@
     <h2>How This Helps</h2>
     <p>
         This tool uses a Teachable Machine model to identify the health of your plant.  
-        It can detect: <strong>Healthy</strong>, <strong>Water Issues</strong>, 
-        <strong>Light Issues</strong>, <strong>Nitrogen Deficiency</strong>,
-        <strong>Potassium Deficiency</strong>, and <strong>Phosphorus Deficiency</strong>.  
+        It can detect: <strong>Healthy</strong>, <strong>Water Issues</strong>, <strong>Light Issues</strong>,
+        <strong>Nitrogen Deficiency</strong>, <strong>Potassium Deficiency</strong>, and
+        <strong>Phosphorus Deficiency</strong>.  
         Perfect for gardeners, beginners, or anyone caring for plants.
     </p>
 
@@ -160,10 +158,10 @@
 
             tag.innerHTML = `${className}: ${confidence}`;
 
-            // reset classes
+            // reset all classes except .tag
             tag.className = "tag";
 
-            // apply color style matching the class
+            // apply color class
             tag.classList.add(formatClassName(className));
         }
     }
