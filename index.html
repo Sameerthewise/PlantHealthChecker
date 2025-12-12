@@ -4,20 +4,21 @@
 <meta charset="UTF-8">
 <title>Plant Health Detector</title>
 
-<!-- Nature-themed styling -->
 <style>
     body {
         font-family: "Segoe UI", sans-serif;
-        background: linear-gradient(#e8f9e4, #c4ecb8);
+        /* Brighter, more vibrant plant-like greens */
+        background: linear-gradient(#d9fdd3, #9fed8a);
         margin: 0;
         padding: 0;
-        color: #2f5125;
+        color: #1f441e;
     }
 
     header {
         text-align: center;
         padding: 30px 10px;
-        background: #a9d89e;
+        /* More vivid healthy-green header */
+        background: #7bd66f;
         box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
 
@@ -35,18 +36,9 @@
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
-    h2 {
-        margin-top: 0;
-    }
-
-    #webcam-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-    }
-
     button {
-        background: #6bbf59;
+        /* Brighter healthy-leaf green */
+        background: #4cc95a;
         border: none;
         padding: 12px 25px;
         color: white;
@@ -58,14 +50,15 @@
     }
 
     button:hover {
-        background: #5aa94b;
+        background: #3fb44d;
     }
 
     #label-container div {
-        background: #f2ffe9;
+        /* Slightly lighter green highlight */
+        background: #eaffdf;
         margin: 6px 0;
         padding: 10px;
-        border-left: 6px solid #6bbf59;
+        border-left: 6px solid #4cc95a;
         border-radius: 6px;
         font-size: 1.1rem;
         box-shadow: 0 1px 4px rgba(0,0,0,0.1);
@@ -112,7 +105,6 @@
 
 <script>
     const URL = "./my_model/";
-
     let model, webcam, labelContainer, maxPredictions;
 
     async function init() {
@@ -131,7 +123,7 @@
         document.getElementById("webcam-container").appendChild(webcam.canvas);
         labelContainer = document.getElementById("label-container");
 
-        labelContainer.innerHTML = ""; // Clear previous labels
+        labelContainer.innerHTML = "";
         for (let i = 0; i < maxPredictions; i++) {
             labelContainer.appendChild(document.createElement("div"));
         }
